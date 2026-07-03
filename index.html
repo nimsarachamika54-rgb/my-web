@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>විභාග ජයග්‍රහණ සැලසුම්කරු | Technology Stream</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #faf9f6; /* Warm cream background */
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Chat animation styles */
+        #chat-window {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #chat-window.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .typing-indicator span {
+            animation: blink 1.4s infinite both;
+            height: 6px;
+            width: 6px;
+            background: #0d9488;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.2; transform: scale(0.8); }
+        }
+    </style>
+</head>
+<body class="p-3 md:p-6 text-slate-800">
+
+    <!-- Top Header & Live Countdown -->
+    <div class="max-w-7xl mx-auto mb-6">
+        <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-emerald-800 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden">
+            <!-- Decorative circle backgrounds -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-xl"></div>
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-xl"></div>
+            
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
+                <div>
+                    <span class="bg-teal-500/30 text-teal-200 text-xs font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider">වයඹ පළාත් වාර විභාගය 2026</span>
+                    <h1 class="text-2xl md:text-4xl font-extrabold mt-3 tracking-tight">තාක්ෂණවේද අංශය (Technology Stream)</h1>
+                    <p class="text-teal-100/80 text-sm md:text-base mt-2 max-w-xl">අවසාන මොහොතේ බිය නොවී, ක්‍රමවත්ව වැඩ කර විභාගය විශිෂ්ට ලෙස ජය ගැනීමට සකස් කළ දින 9 ක ස්මාර්ට් සැලසුම්කරු.</p>
+                </div>
+                <!-- Live Countdown Clock -->
+                <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/10 text-center min-w-[240px]">
+                    <p class="text-xs uppercase tracking-widest text-teal-200 font-semibold mb-1">විභාගයට ඉතිරි කාලය</p>
+                    <div id="countdown-timer" class="text-xl md:text-2xl font-black tracking-normal text-white">
+                        ගණනය කරමින්...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT COLUMN: Time Budgeting & Daily Schedule (3 Cols) -->
+        <div class="lg:col-span-4 space-y-6">
+            <!-- 1. Daily Study Routine Card -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-orange-50 text-orange-600 rounded-2xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-base">දෛනික දින චර්යාව (Daily Routine)</h2>
+                        <p class="text-xs text-slate-400">දිනපතා පිළිපැදිය යුතු කාලසටහන</p>
+                    </div>
+                </div>
+                
+                <!-- Routine Timeline -->
+                <div class="space-y-4 border-l-2 border-teal-50 ml-4 pl-5 relative">
+                    <!-- Step 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-teal-500 border-4 border-white shadow"></div>
+                        <p class="text-xs font-bold text-teal-600">පෙ.ව. 05:00 - පෙ.ව. 07:30</p>
+                        <p class="text-sm font-semibold text-slate-700">SFT (තාක්ෂණවේදය සඳහා විද්‍යාව)</p>
+                        <p class="text-xs text-slate-400">MCQ 50ක් හෝ ව්‍යුහගත පත්‍රයක් සාකච්ඡා කිරීම.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-teal-500 border-4 border-white shadow"></div>
+                        <p class="text-xs font-bold text-teal-600">පෙ.ව. 08:30 - පෙ.ව. 11:30</p>
+                        <p class="text-sm font-semibold text-slate-700">ET හෝ BST (ප්‍රධාන විෂය)</p>
+                        <p class="text-xs text-slate-400">රචනා ප්‍රශ්න (Essay) 2ක් හෝ 3ක් Marking Scheme බලා අධ්‍යයනය.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-teal-500 border-4 border-white shadow"></div>
+                        <p class="text-xs font-bold text-teal-600">ප.ව. 12:00 - ප.ව. 01:30</p>
+                        <p class="text-sm font-semibold text-slate-700">සාමාන්‍ය ඉංග්‍රීසි (English) / GIT</p>
+                        <p class="text-xs text-slate-400">Notice, letter, graph description වැනි අනිවාර්ය ප්‍රශ්න ලියන්න.</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-teal-500 border-4 border-white shadow"></div>
+                        <p class="text-xs font-bold text-teal-600">ප.ව. 02:30 - ප.ව. 05:30</p>
+                        <p class="text-sm font-semibold text-slate-700">3 වන විෂය (ICT / කෘෂි විද්‍යාව / Agri)</p>
+                        <p class="text-xs text-slate-400">කාලය මැන සැබෑ විභාග පත්‍රයක් ලෙස ලිවීම පුහුණු වන්න.</p>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="relative">
+                        <div class="absolute -left-[29px] top-1.5 w-4 h-4 rounded-full bg-teal-500 border-4 border-white shadow"></div>
+                        <p class="text-xs font-bold text-teal-600">ප.ව. 06:30 - ප.ව. 09:30</p>
+                        <p class="text-sm font-semibold text-slate-700">Active Recall & YouTube Revision</p>
+                        <p class="text-xs text-slate-400">අමතක වූ සූත්‍ර ලියා ගැනීම සහ YouTube කෙටි විවරණ නැරඹීම.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Time Budgeting Visualization Card -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-slate-800 text-sm mb-1">දෛනික කාල වෙන්කිරීම</h3>
+                <p class="text-xs text-slate-400 mb-4">විෂයන් සඳහා දිනකට ලැබෙන පැය ගණන</p>
+                <div class="relative flex justify-center items-center h-48">
+                    <canvas id="timeAllocationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- MIDDLE COLUMN: 9-Day Smart Study Roadmap & Progress (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <!-- Checklist Header -->
+                <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-base">දින 9ක ජයග්‍රාහී සැලැස්ම</h2>
+                        <p class="text-xs text-slate-400">දිනපතා ඉලක්ක සම්පූර්ණ කර සලකුණු කරන්න</p>
+                    </div>
+                    <span id="progress-percent" class="bg-teal-50 text-teal-700 font-extrabold text-sm px-3 py-1 rounded-full border border-teal-100">0%</span>
+                </div>
+                
+                <!-- Interactive Progress Bar -->
+                <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden">
+                    <div id="progress-bar-fill" class="bg-teal-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                </div>
+
+                <!-- Roadmap Scrollable Area -->
+                <div id="roadmap-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-1">
+                    <!-- JS will render the day cards dynamically here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Official NWP Timetable & Core Study Rules (4 Cols) -->
+        <div class="lg:col-span-3 space-y-6">
+            <!-- NWP Official Timetable -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-teal-50 text-teal-600 rounded-2xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-sm">NWP නිල විභාග කාලසටහන</h2>
+                        <p class="text-[10px] text-slate-400">CamScanner 15-06-2026 12.59.pdf ඇසුරෙන්</p>
+                    </div>
+                </div>
+
+                <!-- Timetable Items -->
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded">ජූලි 13 (සඳුදා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">කෘෂි විද්‍යාව I, II</p>
+                        <p class="text-[10px] text-slate-400">පෙ.ව. 07:45 - 10:55 (II) | 11:30 - 01:30 (I)</p>
+                    </div>
+
+                    <div class="p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded">ජූලි 15 (බදාදා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">ඉංජිනේරු / ජෛව පද්ධති තාක්ෂණවේදය II, I</p>
+                        <p class="text-[10px] text-slate-400">පෙ.ව. 07:45 - 10:55 (II) | 11:30 - 01:30 (I)</p>
+                    </div>
+
+                    <div class="p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded">ජූලි 17 (සිකුරාදා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">සාමාන්‍ය ඉංග්‍රීසි I, II</p>
+                        <p class="text-[10px] text-slate-400">පෙ.ව. 07:45 - 10:55 (II) | 11:30 - 12:30 (I)</p>
+                    </div>
+
+                    <div class="p-3 bg-teal-50/30 rounded-2xl border border-teal-100/40">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-900 bg-teal-200/60 px-2 py-0.5 rounded">ජූලි 21 (අඟහරුවාදා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-800 mt-1">තාක්ෂණවේදය සඳහා විද්‍යාව (SFT) I, II</p>
+                        <p class="text-[10px] text-teal-700/80 font-medium">පෙ.ව. 07:45 - 10:55 (II) | 11:30 - 01:30 (I)</p>
+                    </div>
+
+                    <div class="p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded">ජූලි 23 (බ්‍රහස්පතින්දා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">තොරතුරු හා සන්නිවේදන තාක්ෂණය (ICT) I, II</p>
+                        <p class="text-[10px] text-slate-400">පෙ.ව. 07:45 - 10:55 (II) | 11:30 - 01:30 (I)</p>
+                    </div>
+
+                    <div class="p-3 bg-slate-50/50 rounded-2xl border border-slate-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-extrabold text-teal-800 bg-teal-100/60 px-2 py-0.5 rounded">ජූලි 24 (සිකුරාදා)</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-700 mt-1">සාමාන්‍ය තොරතුරු තාක්ෂණය (GIT)</p>
+                        <p class="text-[10px] text-slate-400">පෙ.ව. 07:45 - 10:55 (I & II)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Golden Rules -->
+            <div class="bg-gradient-to-tr from-amber-50 to-orange-50/50 rounded-3xl p-5 border border-amber-100 shadow-sm text-slate-700">
+                <h3 class="font-bold text-amber-900 text-sm mb-3">අවසන් මොහොතේ රන් නීති</h3>
+                <ul class="space-y-2 text-xs leading-relaxed">
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-500 mt-0.5">💡</span>
+                        <span>පොත් කියවීම පසෙකලා කෙලින්ම **Past Papers** සමඟ වැඩ කරන්න (Reverse Study Method).</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-500 mt-0.5">💡</span>
+                        <span>තේරෙන්නේම නැති පාඩම් සඳහා **YouTube Revision Discussions** 1.5x වේගයෙන් නරඹන්න.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-amber-500 mt-0.5">💡</span>
+                        <span>මේ දින 9 තුළ සමාජ මාධ්‍ය (Social Media) භාවිතය සම්පූර්ණයෙන්ම සීමා කරන්න.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Term Test Papers -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-2xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-sm">වාර විභාග ප්‍රශ්න පත්‍ර</h2>
+                        <p class="text-[10px] text-slate-400">PDF Downloads</p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-600 mb-4 leading-relaxed">ඔබට අවශ්‍ය පසුගිය පළාත් වාර විභාග ප්‍රශ්න පත්‍ර (Term Test Papers) පහත සබැඳියෙන් ලබා ගත හැක.</p>
+                <a href="https://drive.google.com/drive/folders/1MtfTBWpj_W5jOaJpq32ZbW7DGxLwoWJp" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-xl transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    Google Drive වෙත යන්න
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating AI Chat Assistant -->
+    <!-- Chat Button -->
+    <button onclick="toggleChat()" class="fixed bottom-6 right-6 bg-teal-600 hover:bg-teal-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 z-50 flex items-center justify-center border border-teal-500/20">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+    </button>
+
+    <!-- Chat Window Widget -->
+    <div id="chat-window" class="fixed bottom-24 right-6 w-[92vw] max-w-[390px] h-[520px] max-h-[75vh] bg-white rounded-3xl shadow-2xl border border-teal-100 flex flex-col z-50 overflow-hidden">
+        <!-- Chat Header -->
+        <div class="bg-gradient-to-r from-teal-700 to-emerald-800 p-4 text-white flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-teal-500/20 border border-teal-400/20 rounded-full flex items-center justify-center text-lg">🤖</div>
+                <div>
+                    <h3 class="font-bold text-sm tracking-wide">AI පාඩම් සහයකයා</h3>
+                    <p class="text-[10px] text-teal-100/80">Technology Stream Expert | Kurunegala</p>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-teal-100 hover:text-white transition-colors p-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        
+        <!-- Messages Area -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4 bg-slate-50/50">
+            <div class="flex gap-2.5">
+                <div class="w-7 h-7 bg-teal-100 text-teal-800 rounded-full flex items-center justify-center text-xs shrink-0 font-bold">🤖</div>
+                <div class="bg-white border border-slate-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-xs text-slate-700 leading-relaxed">
+                    ආයුබෝවන්! මම ඔබේ AI පාඩම් සහයකයා. 🌟 <br><br>
+                    වයඹ පළාත් වාර විභාගයට ඇත්තේ තව **දින 9ක්** පමණයි. SFT, ET, BST, ICT හෝ Agri වල තේරෙන්නේ නැති ඕනෑම පාඩමක් හෝ පසුගිය ප්‍රශ්නයක් ගැන දැන් මගෙන් අහන්න. මම ඉතාම කෙටියෙන් ඔබට උදව් කරන්නම්!
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-3 bg-white border-t border-slate-100">
+            <div class="flex gap-2 items-end bg-slate-50 p-1.5 rounded-2xl border border-slate-200 focus-within:border-teal-400 focus-within:ring-2 focus-within:ring-teal-100 transition-all">
+                <textarea id="chat-input" rows="1" class="w-full bg-transparent border-none focus:ring-0 text-xs px-2.5 py-1.5 resize-none max-h-20 scroll-hide outline-none" placeholder="ඔබේ ප්‍රශ්නය සිංහලෙන් හෝ Singlish වලින් අසන්න..." onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                <button onclick="sendMessage()" class="bg-teal-600 hover:bg-teal-700 text-white p-2 rounded-xl transition-colors shrink-0 mb-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 transform rotate-[-45deg] ml-0.5"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="max-w-7xl mx-auto mt-8 pb-8 text-center text-slate-400 text-xs">
+        <p>© 2026 වයඹ පළාත් අධ්‍යාපන දෙපාර්තමේන්තුව - 12 ශ්‍රේණි වාර පරීක්ෂණ සහයක පද්ධතිය.</p>
+        <p class="mt-1">"අද කරන වැඩේ හෙටට කල් දාන්න එපා. උත්සාහවන්තයා ජයගනී!"</p>
+    </div>
+
+    <script>
+        // Roadmap Data
+        const roadmapData = [
+            { id: "day1", day: "Day 1 (ජූලි 04 - සෙනසුරාදා)", tasks: ["SFT: MCQ 50ක් සාකච්ඡා කිරීම", "ET/BST: රචනා ප්‍රශ්න 2ක Marking Scheme බැලීම", "English: Past paper 1ක Notice සහ Letter ලිවීම", "ICT/Agri: Unit 1 MCQ සහ කෙටි ප්‍රශ්න බැලීම"] },
+            { id: "day2", day: "Day 2 (ජූලි 05 - ඉරිදා)", tasks: ["SFT: 2023 Past paper MCQ 1 - 25 නිරාකරණය", "ET/BST: Electronics / Soil Science පාඩමේ කෙටි සටහන් බැලීම", "English: Essay / Paragraph Writing පුහුණුව", "ICT/Agri: Programming / Genetics මූලික සිද්ධාන්ත YouTube මඟින් බැලීම"] },
+            { id: "day3", day: "Day 3 (ජූලි 06 - සඳුදා)", tasks: ["SFT: 2023 Past paper MCQ 26 - 50 නිරාකරණය", "ET/BST: Structural / Bio-system technology රූප සටහන් පුහුණුව", "English: Past Paper Reading & Grammar", "ICT/Agri: Database / Agro-technology කෙටි ප්‍රශ්න ලිවීම"] },
+            { id: "day4", day: "Day 4 (ජූලි 07 - අඟහරුවාදා)", tasks: ["SFT: ද්‍රවස්ථිතිකය හා පීඩනය ගණන් හැදීම", "ET/BST: මෝටර් රථ තාක්ෂණය / ආහාර තාක්ෂණය Unit Essays", "GIT: Past papers 2ක MCQ බැලීම", "ICT/Agri: Flowcharts / Food Chemistry ප්‍රායෝගික ක්‍රියාකාරකම්"] },
+            { id: "day5", day: "Day 5 (ජූලි 08 - බදාදා)", tasks: ["SFT: තාපය හා ආලෝකය ප්‍රශ්න විසඳීම", "ET/BST: ගොඩනැගිලි ද්‍රව්‍ය / ජල සම්පත් කළමනාකරණය Essays", "English: Graphic representation (Graph analysis) ලිවීම", "ICT/Agri: HTML, CSS / Plant Pathology Unit papers"] },
+            { id: "day6", py: "Day 6 (ජූලි 09 - බ්‍රහස්පතින්දා)", tasks: ["SFT: රසායනික ගණනය කිරීම් සහ මවුල ප්‍රශ්න", "ET/BST: ව්‍යවසායකත්වය හා කළමනාකරණය Short notes", "English: Dialogue completion & Listening skills", "ICT/Agri: Python Programming / Agri-economics Papers"] },
+            { id: "day7", day: "Day 7 (ජූලි 10 - සිකුරාදා)", tasks: ["SFT: පසුගිය පළාත් වාර විභාග MCQ පත්‍රයක් කිරීම", "ET/BST: රචනා ප්‍රශ්න ලකුණු කිරීමේ රටාව (Marking Points) ලියා ගැනීම", "English/GIT: Past papers නැවත ඉක්මනින් අවලෝකනය කිරීම", "ICT/Agri: සම්පූර්ණ Past Paper එකක් වේලාව තබා කිරීම"] },
+            { id: "day8", day: "Day 8 (ජූලි 11 - සෙනසුරාදා)", tasks: ["පළමු විභාගය වන කෘෂි විද්‍යාව (හෝ 3 වන විෂය) සඳහා පමණක් වෙන් කරන්න", "කෘෂි විද්‍යාව පසුගිය වසර 3ක පළාත් වාර විභාග ප්‍රශ්න පත්‍ර අධ්‍යයනය කරන්න"] },
+            { id: "day9", day: "Day 9 (ජූලි 12 - ඉරිදා)", tasks: ["පළමු විභාගය (කෘෂි විද්‍යාව / ET / BST) සඳහා පමණක් සම්පූර්ණ දවස වෙන් කරන්න", "සුවබර නින්දක් ලබා ගන්න (පැය 6ක් අනිවාර්යයි) - මනස සන්සුන්ව තබා ගන්න"] }
+        ];
+
+        // Chat History Storage
+        let isChatOpen = false;
+        let aiChatHistory = [];
+
+        // Countdown Clock to July 13, 2026 07:45:00
+        function updateCountdown() {
+            const targetDate = new Date('July 13, 2026 07:45:00').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const timerElement = document.getElementById('countdown-timer');
+            if (!timerElement) return;
+
+            if (distance < 0) {
+                timerElement.innerHTML = "විභාගය ආරම්භ වී ඇත! ජය වේවා! 🎉";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = `<span class="font-extrabold text-teal-300">${days}</span> දින <span class="font-extrabold text-teal-300">${hours}</span> පැය <span class="font-extrabold text-teal-300">${minutes}</span> විනාඩි <span class="font-extrabold text-teal-300">${seconds}</span> තත්පර`;
+        }
+
+        // Generate Interactive Checklist
+        function renderRoadmap() {
+            const container = document.getElementById('roadmap-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            
+            // Load completion states from localStorage
+            const savedState = JSON.parse(localStorage.getItem('tech_study_progress')) || {};
+
+            roadmapData.forEach((dayObj, dayIdx) => {
+                const dayCard = document.createElement('div');
+                dayCard.className = 'bg-slate-50/70 p-4 rounded-2xl border border-slate-100 hover:border-teal-200 hover:bg-white transition-all shadow-sm';
+                
+                let tasksHtml = '';
+                dayObj.tasks.forEach((task, taskIdx) => {
+                    const taskId = `${dayObj.id}_task_${taskIdx}`;
+                    const isChecked = savedState[taskId] ? 'checked' : '';
+                    tasksHtml += `
+                        <label class="flex items-start gap-3 mt-2.5 p-2 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                            <input type="checkbox" id="${taskId}" onchange="updateProgress()" ${isChecked} class="mt-0.5 accent-teal-600 rounded text-teal-600 focus:ring-teal-500 w-4.5 h-4.5 cursor-pointer">
+                            <span class="text-xs font-medium text-slate-600 select-none">${task}</span>
+                        </label>
+                    `;
+                });
+
+                dayCard.innerHTML = `
+                    <h4 class="font-extrabold text-teal-900 text-xs tracking-wide border-b border-teal-100/40 pb-2 flex items-center justify-between">
+                        <span>📅 ${dayObj.day}</span>
+                    </h4>
+                    <div class="mt-1 divide-y divide-slate-100/50">
+                        ${tasksHtml}
+                    </div>
+                `;
+                container.appendChild(dayCard);
+            });
+            updateProgress(false); // Initial calculate
+        }
+
+        // Calculate Checkboxes Progress
+        function updateProgress(save = true) {
+            const checkboxes = document.querySelectorAll('#roadmap-container input[type="checkbox"]');
+            let checkedCount = 0;
+            const progressState = {};
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    checkedCount++;
+                    progressState[cb.id] = true;
+                } else {
+                    progressState[cb.id] = false;
+                }
+            });
+
+            if (save) {
+                localStorage.setItem('tech_study_progress', JSON.stringify(progressState));
+            }
+
+            const total = checkboxes.length || 1;
+            const percentage = Math.round((checkedCount / total) * 100);
+
+            // Update UI
+            document.getElementById('progress-percent').innerText = `${percentage}%`;
+            document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+        }
+
+        // Time Allocation Doughnut Chart initialization
+        function initChart() {
+            const ctx = document.getElementById('timeAllocationChart');
+            if(!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['SFT (පැය 2.5)', 'ET/BST (පැය 3)', 'English/GIT (පැය 1.5)', '3 වන විෂය (පැය 3)', 'Recall & YouTube (පැය 3)'],
+                    datasets: [{
+                        data: [2.5, 3, 1.5, 3, 3],
+                        backgroundColor: [
+                            'rgba(13, 148, 136, 0.85)',  // Teal 600
+                            'rgba(15, 118, 110, 0.9)',   // Teal 700
+                            'rgba(245, 158, 11, 0.85)',  // Amber 500
+                            'rgba(59, 130, 246, 0.85)',  // Blue 500
+                            'rgba(139, 92, 246, 0.85)'   // Violet 500
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 10,
+                                font: {
+                                    family: 'Inter',
+                                    size: 9,
+                                    weight: '600'
+                                },
+                                color: '#475569',
+                                padding: 8
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Toggle Chat window
+        function toggleChat() {
+            const chatWindow = document.getElementById('chat-window');
+            isChatOpen = !isChatOpen;
+            if(isChatOpen) {
+                chatWindow.classList.add('open');
+                document.getElementById('chat-input').focus();
+            } else {
+                chatWindow.classList.remove('open');
+            }
+        }
+
+        // Auto resizing textbox
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('chat-input');
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+        document.getElementById('chat-input').addEventListener('input', autoResizeTextarea);
+
+        // Append UI message
+        function addMessageToUI(text, sender) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = sender === 'user' ? 'flex gap-2.5 justify-end' : 'flex gap-2.5';
+            
+            // Simple markdown bold styling to strong tag conversion
+            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+
+            let avatar = sender === 'user' 
+                ? '<div class="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold order-2 shrink-0">ඔබ</div>'
+                : '<div class="w-7 h-7 bg-teal-100 text-teal-800 rounded-full flex items-center justify-center text-xs order-1 shrink-0">🤖</div>';
+            
+            let bubble = sender === 'user'
+                ? `<div class="bg-teal-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm text-xs max-w-[85%] order-1 leading-relaxed">${formattedText}</div>`
+                : `<div class="bg-white border border-slate-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-xs text-slate-700 max-w-[85%] order-2 leading-relaxed">${formattedText}</div>`;
+
+            messageDiv.innerHTML = avatar + bubble;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chat-messages');
+            const indicatorDiv = document.createElement('div');
+            indicatorDiv.id = 'typing-indicator';
+            indicatorDiv.className = 'flex gap-2.5';
+            indicatorDiv.innerHTML = `
+                <div class="w-7 h-7 bg-teal-100 text-teal-800 rounded-full flex items-center justify-center text-xs shrink-0">🤖</div>
+                <div class="bg-white border border-slate-100 px-4 py-3 rounded-2xl rounded-tl-none shadow-sm flex items-center h-8">
+                    <div class="typing-indicator"><span></span><span></span><span></span></div>
+                </div>
+            `;
+            messagesContainer.appendChild(indicatorDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if(indicator) indicator.remove();
+        }
+
+        // Fetch AI Response via Gemini API
+        async function fetchGeminiResponse(userMessage) {
+            const apiKey = ""; // Canvas handles empty key injection
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            
+            const systemPrompt = "ඔබ ශ්‍රී ලංකාවේ උසස් පෙළ තාක්ෂණවේදය (Technology stream - SFT, ET, BST, ICT, Agri) හදාරන සිසුන්ට උදව් කරන කුරුණෑගල ප්‍රදේශයේ දක්ෂ, සුහදශීලී ගුරුවරයෙකි. මෙම සිසුවාට වයඹ පළාත් වාර විභාගයට ඇත්තේ තව දින 9ක් පමණි. සිසුවා කලබල වී සිටින බැවින් සිංහල භාෂාවෙන් (හෝ අවශ්‍ය නම් Singlish වලින්) ඉතා කෙටියෙන්, පැහැදිලිව, කරුණු වශයෙන් (bullet points) සහ ධෛර්යමත් වන ආකාරයට පිළිතුරු දෙන්න. කිසි විටෙකත් දිගු ඡේද ලියන්න එපා. සිසුවාට නිතරම පසුගිය විභාග ප්‍රශ්න (past papers) කිරීමටත්, කෙටි සටහන් බැලීමටත් මඟ පෙන්වන්න.";
+
+            // Track chat history limit to avoid token bloat in immediate sessions
+            if (aiChatHistory.length > 20) {
+                aiChatHistory.shift();
+                aiChatHistory.shift();
+            }
+
+            aiChatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+            const payload = {
+                contents: aiChatHistory,
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates.length > 0) {
+                    const replyText = data.candidates[0].content.parts[0].text;
+                    aiChatHistory.push({ role: "model", parts: [{ text: replyText }] });
+                    return replyText;
+                } else {
+                    return "සමාවෙන්න මල්ලි/නංගි, මට ඒක හරියට තේරුණේ නැහැ. කරුණාකර ප්‍රශ්නය නැවත කෙටියෙන් අසන්න.";
+                }
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return "අන්තර්ජාල සම්බන්ධතාවයේ බාධාවක් තියෙනවා වගේ. කරුණාකර නැවත උත්සාහ කරන්න.";
+            }
+        }
+
+        async function sendMessage() {
+            const inputField = document.getElementById('chat-input');
+            const message = inputField.value.trim();
+            
+            if(!message) return;
+            
+            inputField.value = '';
+            inputField.style.height = 'auto';
+            
+            addMessageToUI(message, 'user');
+            showTypingIndicator();
+            
+            const responseText = await fetchGeminiResponse(message);
+            
+            hideTypingIndicator();
+            addMessageToUI(responseText, 'bot');
+        }
+
+        // Window Initializer
+        window.onload = function() {
+            renderRoadmap();
+            initChart();
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        };
+    </script>
+</body>
+</html>
